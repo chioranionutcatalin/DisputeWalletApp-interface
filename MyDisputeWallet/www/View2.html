@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- your webpage info goes here -->
+
+    <title>My First Website</title>
+
+    <meta name="author" content="your name" />
+    <meta name="description" content="" />
+
+    <script src="scripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+    <script src="scripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="scripts/View2.js"></script>
+    <script type="text/javascript" src="http://js.stripe.com/v2/"></script>
+
+    
+
+</head>
+<body id="section" style="background-color:#2c3e50">
+ <style>
+     .StripeElement {
+         background-color: white;
+         height: 40px;
+         padding: 10px 12px;
+         border-radius: 4px;
+         border: 1px solid transparent;
+         box-shadow: 0 1px 3px 0 #e6ebf1;
+         -webkit-transition: box-shadow 150ms ease;
+         transition: box-shadow 150ms ease;
+     }
+
+     .StripeElement--focus {
+         box-shadow: 0 1px 3px 0 #cfd7df;
+     }
+
+     .StripeElement--invalid {
+         border-color: #fa755a;
+     }
+
+     .StripeElement--webkit-autofill {
+         background-color: #fefde5 !important;
+     }
+   </style>
+    <!-- webpage content goes here in the body -->
+ <div class="container">
+
+
+
+
+     <div class="row">
+         <centre><h3 style="color:white">Clients List:</h3></centre>
+         <button class="btn-default" id="GoBack">Go Back</button>
+         <button class="btn-default" id="DisputeMap">Go To Dispute Map</button>
+         <div id='cssmenu'>
+             <ul id='options' class="list-group">
+                 <li class="list-group-item active">
+
+
+                     <ul id='clients_list'></ul>
+                 </li>
+
+             </ul>
+         </div>
+     </div>
+
+
+     <div class="list-group-item active">
+         <div class="row">
+
+             <div class="col-xs-4 form-group">
+                 <label>Add dispute</label>
+                 <select id="fmm" style="color:black"></select>
+                 <input type="text" id="reason" placeholder="reason" class="form-control" />
+                 <input type="text" id="amount" placeholder="amount" class="form-control" />
+                 <input type="text" id="longitude" placeholder="longitude" class="form-control" />
+                 <input type="text" id="latitude" placeholder="latitude" class="form-control" />
+                 <label>I get?</label><input type="checkbox" id="iget" />
+                 <button class="btn-default" id="addDispute">Add dispute to client</button>
+
+                 <p id="isPostSuccess" style="display:none">Post was successful</p>
+             </div>
+             <div class="col-xs-4 form-group">
+                 <label>Add Client or Delete Client</label>
+                 <input type="text" id="firstname" placeholder="First Name" class="form-control" />
+                 <input type="text" id="lastname" placeholder="Last Name" class="form-control" />
+                 <input type="text" id="birth" placeholder="Birth" class="form-control" />
+                 <input type="number" id="gender" placeholder="Gender" class="form-control" />
+
+                 <button class="btn-default" id="AddClient">Add Client</button>
+                 <p id="isPostSuccess2" style="display:none">Post was successful</p>
+             </div>
+             <div class="col-xs-4 form-group">
+                 <label>Update or Delete Dispute</label>
+
+                 <input type="text" id="reasonUp" placeholder="reason" class="form-control" />
+                 <input type="text" id="amountUp" placeholder="amount" class="form-control" />
+                 <input type="text" id="longitudeUp" placeholder="longitude" class="form-control" />
+                 <input type="text" id="latitudeUp" placeholder="latitude" class="form-control" />
+                 <label>I get?</label><input type="checkbox" id="igetUp" /><br />
+                 <button class="btn-default" id="RemoveDispute">Remove Dispute </button><br />
+                 <button class="btn-default" id="UpdateDispute">Update Dispute</button>
+                 <p id="isUpdateSuccess2" style="display:none">Operation was successful</p>
+             </div>
+
+
+         </div>
+     </div>
+     <script src="https://js.stripe.com/v3/"></script>
+     <div class="jumbotron">
+         <form action="api/Clients/Disputes/StripeHandle" method="post" id="payment-form">
+             <div class="form-row">
+                 <label for="card-element">
+                     Credit or debit card
+                 </label>
+                 <div id="card-element">
+                     <!-- A Stripe Element will be inserted here. -->
+                 </div>
+
+                 <!-- Used to display form errors. -->
+                 <div id="card-errors" role="alert"></div>
+
+             </div>
+             <button>Submit Payment</button>
+         </form>
+     </div>
+ </div>
+   <script type="text/javascript">
+       // Create a Stripe client.
+var stripe = Stripe('pk_test_sA0SuwxBquMnyM3wxRjkbdCr');
+
+// Create an instance of Elements.
+var elements = stripe.elements();
+
+// Custom styling can be passed to options when creating an Element.
+// (Note that this demo uses a wider set of styles than the guide below.)
+var style = {
+  base: {
+    color: '#32325d',
+    lineHeight: '18px',
+    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    fontSmoothing: 'antialiased',
+    fontSize: '16px',
+    '::placeholder': {
+      color: '#aab7c4'
+    }
+  },
+  invalid: {
+    color: '#fa755a',
+    iconColor: '#fa755a'
+  }
+};
+
+// Create an instance of the card Element.
+       var card = elements.create('card', { style: style, hidePostalCode: true});
+
+// Add an instance of the card Element into the `card-element` <div>.
+card.mount('#card-element');
+
+// Handle real-time validation errors from the card Element.
+card.addEventListener('change', function(event) {
+  var displayError = document.getElementById('card-errors');
+  if (event.error) {
+    displayError.textContent = event.error.message;
+  } else {
+    displayError.textContent = '';
+  }
+});
+
+// Handle form submission.
+var form = document.getElementById('payment-form');
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  stripe.createToken(card).then(function(result) {
+    if (result.error) {
+      // Inform the user if there was an error.
+      var errorElement = document.getElementById('card-errors');
+      errorElement.textContent = result.error.message;
+    } else {
+      // Send the token to your server.
+      stripeTokenHandler(result.token);
+    }
+  });
+});
+
+   </script>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqKoHtiHrN9a3PP70BdHE7QHmQNGtw8mw" type="text/javascript"></script>
+    <script src="scripts/gmaps.js"></script>
+
+    <script src="scripts/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
